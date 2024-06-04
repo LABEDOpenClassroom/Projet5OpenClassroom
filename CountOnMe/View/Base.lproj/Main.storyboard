@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="eqK-jh-KKu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="eqK-jh-KKu">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -78,7 +78,7 @@
                                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="tappedButton:" destination="eqK-jh-KKu" eventType="touchUpInside" id="pil-Xi-wdk"/>
+                                                            <action selector="allClearButtonTapped" destination="eqK-jh-KKu" eventType="touchUpOutside" id="8dB-8n-cJs"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -253,7 +253,7 @@
                                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="tappedButton:" destination="eqK-jh-KKu" eventType="touchUpInside" id="dno-w8-qqe"/>
+                                                    <action selector="equalButtonTapped" destination="eqK-jh-KKu" eventType="touchUpOutside" id="GdS-RH-Iny"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -270,7 +270,6 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="CButton" destination="6BQ-kh-XiG" id="Tm6-OA-seL"/>
                         <outlet property="acButton" destination="c7n-bN-P9n" id="WqT-kK-w1V"/>
                         <outlet property="textView" destination="dIp-38-unX" id="Yvv-oP-Tly"/>
                     </connections>

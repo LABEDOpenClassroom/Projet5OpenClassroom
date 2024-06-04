@@ -4,13 +4,20 @@
 
 import Foundation
 
-enum ErrorTypes {
-    case missingButtonTitle, existingOperator, incorrectExpression, haveEnoughElements
-    case unknownOperator, notNumber, firstElementIsAnOperator, divisionByZero
-    case missingOperator, alreadyHaveResult
+enum CalcError: LocalizedError {
+    case missingButtonTitle
+    case existingOperator
+    case incorrectExpression
+    case haveEnoughElements
+    case unknownOperator
+    case notNumber
+    case firstElementIsAnOperator
+    case divisionByZero
+    case missingOperator
+    case alreadyHaveResult
 
     /// Alert's title.
-    var title: String {
+    var errorDescription: String? {
         switch self {
         case .missingOperator: return "Fatal Error"
         case .existingOperator: return "Existing Operator"
@@ -26,7 +33,7 @@ enum ErrorTypes {
     }
 
     /// Alert's message.
-    var message: String {
+    var failureReason: String? {
         switch self {
         case .missingOperator:
             return "An operator should have been at the end of the expression!"
@@ -51,4 +58,3 @@ enum ErrorTypes {
         }
     }
 }
-

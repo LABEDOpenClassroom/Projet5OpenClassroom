@@ -38,13 +38,14 @@ final class Calc {
     
     var lastResult: Double?
     
-    var error: ErrorTypes?
-    
-    func handleError(_ type: ErrorTypes) {
+    var error: CalcError?
+
+    func handleError(_ type: CalcError) {
         error = type
         delegate?.displayAlert(type)
     }
     
+    // TODO: Clean this code, model MUST never know what a button is
     func buttonHasBeenHitten(_ title: String?) {
         guard let title = title, !title.isEmpty else {
             handleError(.missingButtonTitle)
@@ -52,17 +53,13 @@ final class Calc {
         }
         if let _ = Double(title) {
             addNumberToExpression(title)
-        } else if title == "=" {
-            resolveExpression()
-        } else if title == "AC" {
-            acButtonHasBeenHitten()
         } else if title == "C" {
             cButtonHasBeenHitten()
         } else {
             addOperatorToExpression(title)
         }
     }
-    
+
     func addNumberToExpression(_ number: String) {
         if expressionHaveResult {
             expression = ""
@@ -70,6 +67,7 @@ final class Calc {
         expression.append(number)
     }
     
+    // TODO: Rename, model MUST no know what a button is
     func cButtonHasBeenHitten() {
         if expressionHaveResult {
             expression = ""
@@ -81,8 +79,8 @@ final class Calc {
             }
         }
     }
-    
-    func acButtonHasBeenHitten() {
+
+    func resetExpression() {
         expression = ""
         lastResult = nil
     }
@@ -91,6 +89,7 @@ final class Calc {
         if expressionHaveResult {
             expression = ""
         }
+
         if canAddOperator && !isFirstElementInExpression {
             expression.append(" \(operatorText) ")
         } else if operatorText == "-" && isFirstElementInExpression {

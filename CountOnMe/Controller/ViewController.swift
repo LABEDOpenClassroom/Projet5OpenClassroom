@@ -9,68 +9,64 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
+
+    // MARK: - Constants
+
+    private let calc = Calc()
+
+    // MARK: - Properties
+
     @IBOutlet weak var textView: UITextView!
-    @IBOutlet private weak var acButton: UIButton!
-    @IBOutlet private weak var cButton: UIButton!
-    
-     let calc = Calc()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+
+    // MARK: - Initialisation
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+
         calc.delegate = self
-        
     }
     
-    
-    @IBAction private func tappedButton(_ sender: UIButton) {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Functions
+
+    @IBAction
+    private func tappedButton(_ sender: UIButton) {
         calc.buttonHasBeenHitten(sender.title(for: .normal))
     }
-    
-    
-    
-    private func autoScrollTextView() {
-        
-        let range = NSMakeRange(textView.text.count - 1, 0)
-        textView.scrollRangeToVisible(range)
+
+    @IBAction
+    private func allClearButtonTapped() {
+        calc.resetExpression()
     }
-    
-    
-    
-   
-    private func changeCACButtons(isEnabled: Bool, backgroundColor: UIColor) {
-        let buttons: [UIButton] = [cButton, acButton]
-        for button in buttons {
-            button.isEnabled = isEnabled
-            button.backgroundColor = backgroundColor
-        }
+
+    @IBAction
+    private func equalButtonTapped() {
+        calc.resolveExpression()
+    }
+
+    private func autoScrollTextView() {
+        let range = NSMakeRange(textView.text.count - 1, 0)
+
+        textView.scrollRangeToVisible(range)
     }
 }
 
+// MARK: - CalcDisplayDelegate
+
 extension ViewController: CalcDisplayDelegate {
+
     func updateScreen() {
-            textView.text = calc.expression
-            autoScrollTextView()
-        }
-    
-    
-    
-    func displayAlert(_ error: ErrorTypes) {
-        let alertVC = UIAlertController(title: error.title,
-                                        message: error.message, preferredStyle: .alert)
+        textView.text = calc.expression
+        autoScrollTextView()
+    }
+
+    func displayAlert(_ error: CalcError) {
+        let alertVC = UIAlertController(title: error.localizedDescription, message: error.failureReason, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+
         present(alertVC, animated: true, completion: nil)
     }
-    }
-    
-    
-    
-    
-    
-  
-    
-
-
-
-
-    
+}

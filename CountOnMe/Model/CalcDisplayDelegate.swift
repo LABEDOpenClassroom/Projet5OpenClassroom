@@ -8,6 +8,6 @@
 import Foundation
 
 protocol CalcDisplayDelegate: AnyObject {
-    func displayAlert(_ error: ErrorTypes)
+    func displayAlert(_ error: CalcError)
     func updateScreen()
 }

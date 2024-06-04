@@ -1,73 +1,54 @@
-//
-//  ErrorTypes.swift
-//  CountOnMe
-//
-//  Created by Toufik LABED on 07/05/2024.
-//  Copyright © 2024 Vincent Saluzzo. All rights reserved.
-//
+// ErrorTypes.swift
+// CountOnMe
+// Created by Toufik LABED
 
 import Foundation
+
 enum ErrorTypes {
-    case existingOperator
-    case incorrectExpression
-    case haveEnoughElements
-    case unknownOperator
-    case notNumber
-    case firstElementIsAnOperator
-    case divisionByZero
-    case missingOperator
-    case missingButtonTitle
-    case alreadyHaveResult
-    
+    case missingButtonTitle, existingOperator, incorrectExpression, haveEnoughElements
+    case unknownOperator, notNumber, firstElementIsAnOperator, divisionByZero
+    case missingOperator, alreadyHaveResult
+
     /// Alert's title.
     var title: String {
         switch self {
-        case .missingOperator:
-            return "Fatal error"
-        case .existingOperator:
-            return "Opérateur existant"
-        case .incorrectExpression:
-            return "Expression incorrecte"
-        case .haveEnoughElements:
-            return "Eléments manquants"
-        case .unknownOperator:
-            return "Fatal error"
-        case .notNumber:
-            return "Fatal error"
-        case .firstElementIsAnOperator:
-            return "Opérateur en premier élément"
-        case .divisionByZero:
-            return "Division par zéro"
-        case .missingButtonTitle:
-            return "Fatal error"
-        case .alreadyHaveResult:
-            return "Nouveau calcul nécessaire"
+        case .missingOperator: return "Fatal Error"
+        case .existingOperator: return "Existing Operator"
+        case .incorrectExpression: return "Incorrect Expression"
+        case .haveEnoughElements: return "Missing Elements"
+        case .unknownOperator: return "Fatal Error"
+        case .notNumber: return "Fatal Error"
+        case .firstElementIsAnOperator: return "First Element Is an Operator"
+        case .divisionByZero: return "Division by Zero"
+        case .missingButtonTitle: return "The button title is missing."
+        case .alreadyHaveResult: return "New Calculation Needed"
         }
     }
-    
+
     /// Alert's message.
     var message: String {
         switch self {
         case .missingOperator:
-            return "Un opérateur aurait du se trouver en fin d'expression !"
+            return "An operator should have been at the end of the expression!"
         case .existingOperator:
-            return "Un operateur est déja mis !"
+            return "An operator is already present!"
         case .incorrectExpression:
-            return "Entrez une expression correcte !"
+            return "Enter a correct expression!"
         case .haveEnoughElements:
-            return "Des éléments manquent afin de pouvoir résoudre l'opération !"
+            return "Elements are missing to solve the operation!"
         case .unknownOperator:
-            return "Un opérateur est inconnu !"
+            return "An unknown operator was found!"
         case .notNumber:
-            return "Un élément de type string n'a pas pu être converti en nombre, alors qu'il est sensé être un nombre !"
+            return "A string element could not be converted to a number!"
         case .firstElementIsAnOperator:
-            return "L'expression ne peut pas commencer par un opérateur qui n'est pas moins !"
+            return "Starting with an operator is not allowed, try starting with '-' for example!"
         case .divisionByZero:
-            return "L'opération aboutit à une division par zéro, ce qui est impossible !"
+            return "Division by zero is not possible!"
         case .missingButtonTitle:
-            return "Le titre du bouton est manquant, l'action n'a pas pu être résolue !"
+            return "The button title is missing."
         case .alreadyHaveResult:
-            return "Démarrez un nouveau calcul !"
+            return "Start a new calculation!"
         }
     }
 }
+

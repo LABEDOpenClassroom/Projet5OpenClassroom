@@ -24,10 +24,11 @@ class ViewController: UIViewController {
     
     
     @IBAction private func tappedButton(_ sender: UIButton) {
-        calc.buttonHasBeenHitten(sender.title(for: .normal))
+        if let title = sender.title(for: .normal) {
+                calc.handleInput(title)
+            }
+        
     }
-    
-    
     
     private func autoScrollTextView() {
         
@@ -35,9 +36,6 @@ class ViewController: UIViewController {
         textView.scrollRangeToVisible(range)
     }
     
-    
-    
-   
     private func changeCACButtons(isEnabled: Bool, backgroundColor: UIColor) {
         let buttons: [UIButton] = [cButton, acButton]
         for button in buttons {

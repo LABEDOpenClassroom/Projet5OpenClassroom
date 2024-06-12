@@ -3,11 +3,18 @@
 // Created by Toufik LABED
 
 import Foundation
-
+ 
 enum ErrorTypes {
-    case missingButtonTitle, existingOperator, incorrectExpression, haveEnoughElements
-    case unknownOperator, notNumber, firstElementIsAnOperator, divisionByZero
-    case missingOperator, alreadyHaveResult
+        case missingButtonTitle
+        case existingOperator
+        case incorrectExpression
+        case haveEnoughElements
+        case unknownOperator
+        case notNumber
+        case firstElementIsAnOperator
+        case divisionByZero
+        case missingOperator
+        case alreadyHaveResult
 
     /// Alert's title.
     var title: String {

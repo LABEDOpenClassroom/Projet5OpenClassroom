@@ -45,24 +45,20 @@ final class Calc {
         delegate?.displayAlert(type)
     }
     
-    func buttonHasBeenHitten(_ title: String?) {
-        guard let title = title, !title.isEmpty else {
-            handleError(.missingButtonTitle)
-            return
-        }
-        if let _ = Double(title) {
-            addNumberToExpression(title)
-        } else if title == "=" {
+    func handleInput(_ input: String) {
+        if let _ = Double(input) {
+            addNumberToExpression(input)
+        } else if input == "=" {
             resolveExpression()
-        } else if title == "AC" {
+        } else if input == "AC" {
             acButtonHasBeenHitten()
-        } else if title == "C" {
+        } else if input == "C" {
             cButtonHasBeenHitten()
         } else {
-            addOperatorToExpression(title)
+            addOperatorToExpression(input)
         }
     }
-    
+
     func addNumberToExpression(_ number: String) {
         if expressionHaveResult {
             expression = ""

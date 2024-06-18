@@ -47,15 +47,15 @@ final class Calc {
     
     func handleInput(_ input: String) {
         if let _ = Double(input) {
-            addNumberToExpression(input)
+            addNumberToExpression(input) // TODO: Refactor into a single function
         } else if input == "=" {
-            resolveExpression()
+            resolveExpression() // TODO: Refactor into a single function
         } else if input == "AC" {
-            acButtonHasBeenHitten()
+            acButtonHasBeenHitten() // TODO: Refactor into a single function
         } else if input == "C" {
-            cButtonHasBeenHitten()
+            cButtonHasBeenHitten() // TODO: Refactor into a single function
         } else {
-            addOperatorToExpression(input)
+            addOperatorToExpression(input) // TODO: Refactor into a single function
         }
     }
 
@@ -112,58 +112,73 @@ final class Calc {
         
         var operations = elements
         let result = performOperations(&operations)
-        expression.append(" = \(result)")
-        lastResult = Double(result)
+        
+        guard let castedResult = Double(result), let text = Self.numberFormatter.string(from: NSNumber(floatLiteral: castedResult)) else {
+            return
+        }
+
+        expression.append(" = \(text)")
+
+        lastResult = castedResult
     }
-    
+
+    static var numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumSignificantDigits = 12
+        formatter.locale = Locale.current
+
+        return formatter
+    }()
+
+    func resolveOperation(_ operations: [String], _ index: Int) -> Double? {
+        guard let left = Double(operations[index - 1]),
+              let right = Double(operations[index + 1]) else { return nil }
+        switch operations[index] {
+        case "×":
+            return left * right
+        case "÷":
+            return right != 0 ? left / right : nil
+        case "+":
+            return left + right
+        case "-":
+            return left - right
+        default:
+            return nil
+        }
+    }
+
+    func reduceOperations(_ ops: [String], priorityOperators: [String]) -> [String] {
+        var ops = ops
+        var index = 0
+        while index < ops.count {
+            if priorityOperators.contains(ops[index]) {
+                if let result = resolveOperation(ops, index) {
+                    ops[index - 1] = "\(result)"
+                    ops.removeSubrange(index...index + 1)
+                    index -= 1
+                } else {
+                    handleError(.divisionByZero)
+                    return []
+                }
+            } else {
+                index += 1
+            }
+        }
+        return ops
+    }
+
     func performOperations(_ operations: inout [String]) -> String {
         let priorityOperators = ["×", "÷"]
         let secondaryOperators = ["+", "-"]
-        
-        func resolveOperation(_ index: Int) -> Double? {
-            guard let left = Double(operations[index - 1]),
-                  let right = Double(operations[index + 1]) else { return nil }
-            switch operations[index] {
-            case "×":
-                return left * right
-            case "÷":
-                return right != 0 ? left / right : nil
-            case "+":
-                return left + right
-            case "-":
-                return left - right
-            default:
-                return nil
-            }
-        }
-        
-        func reduceOperations(_ ops: [String]) -> [String] {
-            var ops = ops
-            var index = 0
-            while index < ops.count {
-                if priorityOperators.contains(ops[index]) {
-                    if let result = resolveOperation(index) {
-                        ops[index - 1] = "\(result)"
-                        ops.removeSubrange(index...index + 1)
-                        index -= 1
-                    } else {
-                        handleError(.divisionByZero)
-                        return []
-                    }
-                } else {
-                    index += 1
-                }
-            }
-            return ops
-        }
-        
-        operations = reduceOperations(operations)
+
+        operations = reduceOperations(operations, priorityOperators: priorityOperators)
         if operations.isEmpty { return "" }
         
         var index = 1
         while index < operations.count {
             if secondaryOperators.contains(operations[index]) {
-                if let result = resolveOperation(index) {
+                if let result = resolveOperation(operations, index) {
                     operations[index - 1] = "\(result)"
                     operations.removeSubrange(index...index + 1)
                     index -= 1

@@ -46,10 +46,19 @@ class SimpleCalcTests: XCTestCase {
     func testComplexExpression() {
         calc.expression = "3 + 5 × 2 - 8 ÷ 4"
         calc.handleInput("=")
-        XCTAssert(calc.expression == "3 + 5 × 2 - 8 ÷ 4 = 10")
+
+        XCTAssert(calc.expression == "3 + 5 × 2 - 8 ÷ 4 = 11")
         XCTAssertNil(calc.error)
     }
-    
+
+    func testComplexExpression2() {
+        calc.expression = "1 + 2 - 3 × 4 ÷ 5"
+        calc.handleInput("=")
+
+        XCTAssertTrue(calc.expression.contains("1 + 2 - 3 × 4 ÷ 5 = 0,6"))
+        XCTAssertNil(calc.error)
+    }
+
     // MARK: - Error Scenarios
     
     func testDivisionByZero() {
@@ -63,16 +72,25 @@ class SimpleCalcTests: XCTestCase {
         calc.handleInput("=")
         XCTAssert(calc.error == .incorrectExpression)
     }
-    
+    /*
     func testExistingOperator() {
         calc.expression = "10 + +"
         calc.handleInput("=")
-        XCTAssert(calc.error == .existingOperator)
+
+        XCTAssertEqual(calc.error, .existingOperator)
     }
+    */
     
+    func testExistingOperator() {
+        calc.expression = "10 +"
+        calc.handleInput("+")        
+        XCTAssertEqual(calc.error, .existingOperator)
+    }
+
     func testMissingElements() {
         calc.expression = "10 +"
         calc.handleInput("=")
         XCTAssert(calc.error == .incorrectExpression)
     }
 }
+

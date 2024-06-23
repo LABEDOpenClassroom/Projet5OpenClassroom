@@ -45,6 +45,8 @@ final class Calc {
         error = type
         delegate?.displayAlert(type)
     }
+   
+
     /*
     func handleInput(_ input: String) {
         if let _ = Double(input) {
@@ -57,9 +59,11 @@ final class Calc {
             cButtonHasBeenHitten() // TODO: Refactor into a single function
         } else {
             addOperatorToExpression(input) // TODO: Refactor into a single function
+     
         }
     }
 */
+  
     
     func handleInput(_ input: String) {
         print("handleInput called with input: \(input)")
@@ -77,8 +81,6 @@ final class Calc {
             handleError(.incorrectExpression)
         }
     }
-
-
 
     func addNumberToExpression(_ number: String) {
         if expressionHaveResult {
@@ -98,6 +100,7 @@ final class Calc {
             }
         }
     }
+
     
     func acButtonHasBeenHitten() {
         expression = ""
@@ -126,11 +129,6 @@ final class Calc {
         }
     }
 
-
-
-
-
-    
     func resolveExpression() {
         guard expressionIsCorrect else {
             handleError(.incorrectExpression)
@@ -233,6 +231,3 @@ final class Calc {
         }
     }
 }
-
-
-

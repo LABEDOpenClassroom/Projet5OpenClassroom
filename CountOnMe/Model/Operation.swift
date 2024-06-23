@@ -24,7 +24,6 @@ enum Operation {
         }
     }
     
-    
     func resolve(_ left: Double, _ right: Double) -> String? {
         switch self {
         case .addition:

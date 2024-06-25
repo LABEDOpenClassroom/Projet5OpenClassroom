@@ -1,111 +1,94 @@
 import Foundation
 
 final class Calc {
-    
+
+    // MARK: - Constants
+
+    private static let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumSignificantDigits = 12
+        formatter.locale = Locale.current
+
+        return formatter
+    }()
+
+    // MARK: - Properties
+
     weak var delegate: CalcDisplayDelegate?
-    
+
     var expression: String = "1 + 1 = 2" {
         didSet {
             delegate?.updateScreen()
         }
     }
-    
-    var elements: [String] {
-        return expression.split(separator: " ").map { "\($0)" }
+
+    private var elements: [String] {
+        expression.split(separator: " ").map { "\($0)" }
     }
-    
-    var expressionIsCorrect: Bool {
+
+    private var expressionIsCorrect: Bool {
         guard let last = elements.last else { return false }
+
         return !["+", "-", "×", "÷"].contains(last)
     }
-    
-    var expressionHaveEnoughElement: Bool {
+
+    private var expressionHaveEnoughElement: Bool {
         return elements.count >= 3
     }
-    
-    var canAddOperator: Bool {
+
+    private var canAddOperator: Bool {
         guard let last = elements.last else { return false }
+
         return !["+", "-", "×", "÷"].contains(last)
     }
-    
-    
-    var isFirstElementInExpression: Bool {
-        return elements.isEmpty
+
+    private var isFirstElementInExpression: Bool {
+        elements.isEmpty
     }
-    
-    var expressionHaveResult: Bool {
-        return expression.contains("=")
+
+    private var expressionHaveResult: Bool {
+        expression.contains("=")
     }
-    
-    var lastResult: Double?
-    
+
+    private var lastResult: Double?
+
     var error: ErrorTypes?
-    
-    func handleError(_ type: ErrorTypes) {
+
+    // MARK: - Functions
+
+    private func handleError(_ type: ErrorTypes) {
         error = type
         delegate?.displayAlert(type)
     }
-    /*
-    func handleInput(_ input: String) {
-        if let _ = Double(input) {
-            addNumberToExpression(input) // TODO: Refactor into a single function
-        } else if input == "=" {
-            resolveExpression() // TODO: Refactor into a single function
-        } else if input == "AC" {
-            acButtonHasBeenHitten() // TODO: Refactor into a single function
-        } else if input == "C" {
-            cButtonHasBeenHitten() // TODO: Refactor into a single function
-        } else {
-            addOperatorToExpression(input) // TODO: Refactor into a single function
-        }
-    }
-*/
-    
-    func handleInput(_ input: String) {
-        print("handleInput called with input: \(input)")
-        if let _ = Double(input) {
-            addNumberToExpression(input)
-        } else if input == "=" {
-            resolveExpression()
-        } else if input == "AC" {
-            acButtonHasBeenHitten()
-        } else if input == "C" {
-            cButtonHasBeenHitten()
-        } else if ["+", "-", "×", "÷"].contains(input) {
-            addOperatorToExpression(input)
-        } else {
-            handleError(.incorrectExpression)
-        }
-    }
-
-
 
     func addNumberToExpression(_ number: String) {
         if expressionHaveResult {
             expression = ""
         }
+        
         expression.append(number)
     }
-    
-    func cButtonHasBeenHitten() {
+
+    func clear() {
         if expressionHaveResult {
             expression = ""
             lastResult = nil
         } else if !expression.isEmpty {
             expression.removeLast()
+
             if expression.last == " " {
-                expression.removeLast(2)
+                expression.removeLast(1)
             }
         }
     }
-    
-    func acButtonHasBeenHitten() {
+
+    func clearAll() {
         expression = ""
         lastResult = nil
     }
-    
+
     func addOperatorToExpression(_ operatorText: String) {
-            
         if expressionHaveResult {
             expression = ""
         }
@@ -126,11 +109,6 @@ final class Calc {
         }
     }
 
-
-
-
-
-    
     func resolveExpression() {
         guard expressionIsCorrect else {
             handleError(.incorrectExpression)
@@ -144,10 +122,10 @@ final class Calc {
             handleError(.alreadyHaveResult)
             return
         }
-        
+
         var operations = elements
         let result = performOperations(&operations)
-        
+
         guard let castedResult = Double(result), let text = Self.numberFormatter.string(from: NSNumber(floatLiteral: castedResult)) else {
             return
         }
@@ -157,16 +135,7 @@ final class Calc {
         lastResult = castedResult
     }
 
-    static var numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumSignificantDigits = 12
-        formatter.locale = Locale.current
-
-        return formatter
-    }()
-
-    func resolveOperation(_ operations: [String], _ index: Int) -> Double? {
+    private func resolveOperation(_ operations: [String], _ index: Int) -> Double? {
         guard let left = Double(operations[index - 1]),
               let right = Double(operations[index + 1]) else { return nil }
         switch operations[index] {
@@ -183,7 +152,7 @@ final class Calc {
         }
     }
 
-    func reduceOperations(_ ops: [String], priorityOperators: [String]) -> [String] {
+    private func reduceOperations(_ ops: [String], priorityOperators: [String]) -> [String] {
         var ops = ops
         var index = 0
         while index < ops.count {
@@ -203,13 +172,13 @@ final class Calc {
         return ops
     }
 
-    func performOperations(_ operations: inout [String]) -> String {
+    private func performOperations(_ operations: inout [String]) -> String {
         let priorityOperators = ["×", "÷"]
         let secondaryOperators = ["+", "-"]
 
         operations = reduceOperations(operations, priorityOperators: priorityOperators)
         if operations.isEmpty { return "" }
-        
+
         var index = 1
         while index < operations.count {
             if secondaryOperators.contains(operations[index]) {
@@ -221,7 +190,7 @@ final class Calc {
             }
             index += 1
         }
-        
+
         if let result = Double(operations.first ?? "") {
             if result.truncatingRemainder(dividingBy: 1) == 0 {
                 return "\(Int(result))"
@@ -233,6 +202,3 @@ final class Calc {
         }
     }
 }
-
-
-

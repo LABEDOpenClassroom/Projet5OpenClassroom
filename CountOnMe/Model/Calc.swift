@@ -1,10 +1,11 @@
+// Calc.swift
 import Foundation
 
 final class Calc {
     
     weak var delegate: CalcDisplayDelegate?
     
-    var expression: String = "1 + 1 = 2" {
+    private(set) var expression: String = "1 + 1 = 2" {
         didSet {
             delegate?.updateScreen()
         }
@@ -28,7 +29,6 @@ final class Calc {
         return !["+", "-", "×", "÷"].contains(last)
     }
     
-    
     var isFirstElementInExpression: Bool {
         return elements.isEmpty
     }
@@ -45,28 +45,8 @@ final class Calc {
         error = type
         delegate?.displayAlert(type)
     }
-   
-
-    /*
-    func handleInput(_ input: String) {
-        if let _ = Double(input) {
-            addNumberToExpression(input) // TODO: Refactor into a single function
-        } else if input == "=" {
-            resolveExpression() // TODO: Refactor into a single function
-        } else if input == "AC" {
-            acButtonHasBeenHitten() // TODO: Refactor into a single function
-        } else if input == "C" {
-            cButtonHasBeenHitten() // TODO: Refactor into a single function
-        } else {
-            addOperatorToExpression(input) // TODO: Refactor into a single function
-     
-        }
-    }
-*/
-  
     
     func handleInput(_ input: String) {
-        print("handleInput called with input: \(input)")
         if let _ = Double(input) {
             addNumberToExpression(input)
         } else if input == "=" {
@@ -81,15 +61,19 @@ final class Calc {
             handleError(.incorrectExpression)
         }
     }
-
-    func addNumberToExpression(_ number: String) {
+    
+    func setExpression(_ newExpression: String) {
+        expression = newExpression
+    }
+    
+    private func addNumberToExpression(_ number: String) {
         if expressionHaveResult {
             expression = ""
         }
         expression.append(number)
     }
     
-    func cButtonHasBeenHitten() {
+    private func cButtonHasBeenHitten() {
         if expressionHaveResult {
             expression = ""
             lastResult = nil
@@ -100,36 +84,31 @@ final class Calc {
             }
         }
     }
-
     
-    func acButtonHasBeenHitten() {
+    private func acButtonHasBeenHitten() {
         expression = ""
         lastResult = nil
     }
     
-    func addOperatorToExpression(_ operatorText: String) {
-            
+    private func addOperatorToExpression(_ operatorText: String) {
         if expressionHaveResult {
             expression = ""
         }
-
+        
         if isFirstElementInExpression {
-            // Si l'expression est vide et l'opérateur est "-", on permet l'ajout du "-"
             if operatorText == "-" {
                 expression = "-"
             } else {
                 handleError(.incorrectExpression)
             }
         } else if canAddOperator {
-            // Si on peut ajouter un opérateur
             expression.append(" \(operatorText) ")
         } else {
-            // Si on ne peut pas ajouter d'opérateur (le dernier élément est un opérateur)
             handleError(.existingOperator)
         }
     }
-
-    func resolveExpression() {
+    
+    private func resolveExpression() {
         guard expressionIsCorrect else {
             handleError(.incorrectExpression)
             return
@@ -149,22 +128,21 @@ final class Calc {
         guard let castedResult = Double(result), let text = Self.numberFormatter.string(from: NSNumber(floatLiteral: castedResult)) else {
             return
         }
-
+        
         expression.append(" = \(text)")
-
+        
         lastResult = castedResult
     }
-
+    
     static var numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.maximumSignificantDigits = 12
         formatter.locale = Locale.current
-
         return formatter
     }()
-
-    func resolveOperation(_ operations: [String], _ index: Int) -> Double? {
+    
+    private func resolveOperation(_ operations: [String], _ index: Int) -> Double? {
         guard let left = Double(operations[index - 1]),
               let right = Double(operations[index + 1]) else { return nil }
         switch operations[index] {
@@ -180,8 +158,8 @@ final class Calc {
             return nil
         }
     }
-
-    func reduceOperations(_ ops: [String], priorityOperators: [String]) -> [String] {
+    
+    private func reduceOperations(_ ops: [String], priorityOperators: [String]) -> [String] {
         var ops = ops
         var index = 0
         while index < ops.count {
@@ -200,11 +178,11 @@ final class Calc {
         }
         return ops
     }
-
-    func performOperations(_ operations: inout [String]) -> String {
+    
+    private func performOperations(_ operations: inout [String]) -> String {
         let priorityOperators = ["×", "÷"]
         let secondaryOperators = ["+", "-"]
-
+        
         operations = reduceOperations(operations, priorityOperators: priorityOperators)
         if operations.isEmpty { return "" }
         
@@ -231,3 +209,4 @@ final class Calc {
         }
     }
 }
+

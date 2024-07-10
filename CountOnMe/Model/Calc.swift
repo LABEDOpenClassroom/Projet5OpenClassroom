@@ -1,9 +1,20 @@
-// Calc.swift
 import Foundation
 
 final class Calc {
-    
     weak var delegate: CalcDisplayDelegate?
+    
+    // MARK: - Constants
+    
+    private static let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumSignificantDigits = 12
+        formatter.locale = Locale.current
+        
+        return formatter
+    }()
+    
+    // MARK: - Properties
     
     private(set) var expression: String = "1 + 1 = 2" {
         didSet {
@@ -11,33 +22,33 @@ final class Calc {
         }
     }
     
-    var elements: [String] {
+    private var elements: [String] {
         return expression.split(separator: " ").map { "\($0)" }
     }
     
-    var expressionIsCorrect: Bool {
+    private var expressionIsCorrect: Bool {
         guard let last = elements.last else { return false }
         return !["+", "-", "×", "÷"].contains(last)
     }
     
-    var expressionHaveEnoughElement: Bool {
+    private var expressionHaveEnoughElement: Bool {
         return elements.count >= 3
     }
     
-    var canAddOperator: Bool {
+    private var canAddOperator: Bool {
         guard let last = elements.last else { return false }
         return !["+", "-", "×", "÷"].contains(last)
     }
     
-    var isFirstElementInExpression: Bool {
+    private var isFirstElementInExpression: Bool {
         return elements.isEmpty
     }
     
-    var expressionHaveResult: Bool {
+    private var expressionHaveResult: Bool {
         return expression.contains("=")
     }
     
-    var lastResult: Double?
+    private var lastResult: Double?
     
     var error: ErrorTypes?
     
@@ -66,31 +77,35 @@ final class Calc {
         expression = newExpression
     }
     
-    private func addNumberToExpression(_ number: String) {
+    func addNumberToExpression(_ number: String) {
         if expressionHaveResult {
             expression = ""
         }
         expression.append(number)
     }
     
-    private func cButtonHasBeenHitten() {
+    func cButtonHasBeenHitten() {
         if expressionHaveResult {
             expression = ""
             lastResult = nil
         } else if !expression.isEmpty {
-            expression.removeLast()
             if expression.last == " " {
-                expression.removeLast(2)
+                expression.removeLast(3) 
+            } else {
+                expression.removeLast()
+                if let lastChar = expression.last, lastChar == " " {
+                    expression.removeLast()
+                }
             }
         }
     }
     
-    private func acButtonHasBeenHitten() {
+    func acButtonHasBeenHitten() {
         expression = ""
         lastResult = nil
     }
     
-    private func addOperatorToExpression(_ operatorText: String) {
+    func addOperatorToExpression(_ operatorText: String) {
         if expressionHaveResult {
             expression = ""
         }
@@ -108,7 +123,7 @@ final class Calc {
         }
     }
     
-    private func resolveExpression() {
+    func resolveExpression() {
         guard expressionIsCorrect else {
             handleError(.incorrectExpression)
             return
@@ -133,14 +148,6 @@ final class Calc {
         
         lastResult = castedResult
     }
-    
-    static var numberFormatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.maximumSignificantDigits = 12
-        formatter.locale = Locale.current
-        return formatter
-    }()
     
     private func resolveOperation(_ operations: [String], _ index: Int) -> Double? {
         guard let left = Double(operations[index - 1]),
@@ -186,17 +193,8 @@ final class Calc {
         operations = reduceOperations(operations, priorityOperators: priorityOperators)
         if operations.isEmpty { return "" }
         
-        var index = 1
-        while index < operations.count {
-            if secondaryOperators.contains(operations[index]) {
-                if let result = resolveOperation(operations, index) {
-                    operations[index - 1] = "\(result)"
-                    operations.removeSubrange(index...index + 1)
-                    index -= 1
-                }
-            }
-            index += 1
-        }
+        operations = reduceOperations(operations, priorityOperators: secondaryOperators)
+        if operations.isEmpty { return "" }
         
         if let result = Double(operations.first ?? "") {
             if result.truncatingRemainder(dividingBy: 1) == 0 {
